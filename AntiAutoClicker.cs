@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Oxide.Plugins
 {
-    [Info("AntiAutoClicker", "Orangemart", "1.2.6")]
+    [Info("AntiAutoClicker", "Orangemart", "1.3.0")]
     [Description("Teleports or kicks players who stay near shopkeepers or drone marketplaces too long, with configurable settings.")]
     public class AntiAutoClicker : RustPlugin
     {
