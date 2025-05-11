@@ -1,7 +1,7 @@
 # AntiAutoClicker - Rust Plugin
 
 ## 📌 Overview
-**AntiAutoClicker** is a Rust Oxide plugin that detects and punishes players who stay near NPC shopkeepers **or Drone Marketplaces** for too long, typically to abuse autoclickers. Players can either be **teleported** or **kicked**, based on configuration and permissions. Actions are logged to a Discord webhook for moderation visibility.
+**AntiAutoClicker** is a Rust Oxide plugin that detects and punishes players who stay near NPC shopkeepers or Drone Marketplaces for too long, typically to abuse autoclickers. Players can either be **teleported** or **kicked**, based on configuration and permissions. Actions are logged to a Discord webhook for moderation visibility.
 
 ---
 
