@@ -1,16 +1,17 @@
 # AntiAutoClicker - Rust Plugin
 
 ## 📌 Overview
-**AntiAutoClicker** is a Rust Oxide plugin that detects and punishes players who stay near NPC shopkeepers for too long, typically to abuse autoclickers. Players can either be **teleported** or **kicked**, based on configuration and permissions. Actions are logged to a Discord webhook for moderation visibility.
+**AntiAutoClicker** is a Rust Oxide plugin that detects and punishes players who stay near NPC shopkeepers **or Drone Marketplaces** for too long, typically to abuse autoclickers. Players can either be **teleported** or **kicked**, based on configuration and permissions. Actions are logged to a Discord webhook for moderation visibility.
 
 ---
 
 ## 🛠️ Features
-- 🛑 Detects AFK players near NPC shopkeepers
+- 🛑 Detects AFK players near NPC shopkeepers and (optionally) Drone Marketplaces
 - 🚫 Prevents autoclicker abuse with a configurable AFK timeout
 - 🌀 Teleports or kicks offenders (configurable behavior)
 - 🔐 Permission-based kicking (only specific players can be kicked)
 - 📡 Logs actions (teleport/kick) to a configurable Discord webhook
+- 🗺️ Configurable monitoring for Drone Marketplaces (`marketplace.prefab`)
 - ⚙️ Fully configurable via `oxide/config/AntiAutoClicker.json`
 - ✅ Lightweight, optimized, and has no plugin dependencies
 
@@ -36,7 +37,8 @@ Generated at `oxide/config/AntiAutoClicker.json`:
     "TeleportDistanceMeters": 3.0,
     "CheckIntervalSeconds": 15.0,
     "KickInsteadOfTeleport": false,
-    "DiscordWebhookURL": ""
+    "DiscordWebhookURL": "",
+    "CheckDroneMarketplaces": false
 }
 ```
 

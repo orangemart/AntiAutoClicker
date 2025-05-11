@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Oxide.Plugins
 {
     [Info("AntiAutoClicker", "Orangemart", "1.2.6")]
-    [Description("Teleports or kicks players who stay near a shopkeeper too long, with configurable settings.")]
+    [Description("Teleports or kicks players who stay near shopkeepers or drone marketplaces too long, with configurable settings.")]
     public class AntiAutoClicker : RustPlugin
     {
         private readonly Oxide.Core.Libraries.WebRequests webRequests = Interface.Oxide.GetLibrary<Oxide.Core.Libraries.WebRequests>();
@@ -20,6 +20,7 @@ namespace Oxide.Plugins
         private float checkInterval;
         private bool kickInsteadOfTeleport;
         private string discordWebhookUrl;
+        private bool checkDroneMarketplaces;
 
         private const string KickPermission = "antiautoclicker.kickable";
 
@@ -32,6 +33,7 @@ namespace Oxide.Plugins
             Config["CheckIntervalSeconds"] = 15f;
             Config["KickInsteadOfTeleport"] = false;
             Config["DiscordWebhookURL"] = "";
+            Config["CheckDroneMarketplaces"] = false; // New config option
             SaveConfig();
         }
 
@@ -49,6 +51,7 @@ namespace Oxide.Plugins
             checkInterval = GetConfig("CheckIntervalSeconds", 15f);
             kickInsteadOfTeleport = GetConfig("KickInsteadOfTeleport", false);
             discordWebhookUrl = GetConfig("DiscordWebhookURL", "");
+            checkDroneMarketplaces = GetConfig("CheckDroneMarketplaces", false);
         }
 
         private T GetConfig<T>(string key, T defaultValue)
@@ -72,7 +75,7 @@ namespace Oxide.Plugins
 
         private void OnServerInitialized()
         {
-            PrintWarning("AntiAutoClicker initialized. Finding shopkeepers...");
+            PrintWarning("AntiAutoClicker initialized. Finding monitored locations (shopkeepers/marketplaces)...");
 
             FindShopkeepers();
             timer.Every(checkInterval, CheckAfkPlayers);
@@ -81,14 +84,39 @@ namespace Oxide.Plugins
         private void FindShopkeepers()
         {
             shopkeeperPositions.Clear();
+            int npcVendorCount = 0;
+            int droneMarketplaceCount = 0;
+
             foreach (var entity in BaseNetworkable.serverEntities)
             {
+                // Debugging: Log all Marketplace entities found to see their details
+                if (entity is Marketplace marketplaceInstance)
+                {
+                    PrintWarning($"[DEBUG AAC] Iterating: Found a Marketplace entity. Type: {entity.GetType().Name}, ShortPrefabName: '{marketplaceInstance.ShortPrefabName ?? "null"}', PrefabName: '{marketplaceInstance.PrefabName ?? "null"}', Position: {marketplaceInstance.transform.position}");
+                }
+
                 if (entity is NPCVendingMachine vendingMachine && vendingMachine.ShortPrefabName.Contains("shopkeeper_vm_invis"))
                 {
                     shopkeeperPositions.Add(vendingMachine.transform.position);
+                    npcVendorCount++;
+                }
+                // Check for Drone Marketplaces if the config option is enabled
+                else if (checkDroneMarketplaces && entity is Marketplace marketplaceTerminal && marketplaceTerminal.ShortPrefabName == "marketplace")
+                {
+                    // Explicitly log when we are about to add a drone marketplace
+                    PrintWarning($"[DEBUG AAC] Adding Marketplace to monitored locations: ShortPrefabName='{marketplaceTerminal.ShortPrefabName}', Position={marketplaceTerminal.transform.position}");
+                    shopkeeperPositions.Add(marketplaceTerminal.transform.position);
+                    droneMarketplaceCount++;
                 }
             }
-            PrintWarning($"[INFO] Found {shopkeeperPositions.Count} shopkeepers.");
+
+            string foundMessage = $"[INFO] Found {npcVendorCount} NPC shopkeepers.";
+            if (checkDroneMarketplaces)
+            {
+                foundMessage += $" Found {droneMarketplaceCount} drone marketplaces.";
+            }
+            foundMessage += $" Total monitored locations: {shopkeeperPositions.Count}.";
+            PrintWarning(foundMessage);
         }
 
         private void CheckAfkPlayers()
@@ -145,16 +173,16 @@ namespace Oxide.Plugins
             Vector3 backwardPosition = player.transform.position - (player.eyes.BodyForward() * teleportDistance);
             backwardPosition.y = player.transform.position.y; // Maintain height
             player.Teleport(backwardPosition);
-            player.ChatMessage("You've been moved for staying near a shopkeeper too long.");
-            PrintWarning($"[INFO] Player {player.displayName} was teleported for staying near a shopkeeper too long.");
-            LogToDiscord($":truck: **{player.displayName}** was teleported for loitering at the shopkeeper.");
+            player.ChatMessage("You've been moved for staying near a vending area too long.");
+            PrintWarning($"[INFO] Player {player.displayName} was teleported for staying near a vending area too long.");
+            LogToDiscord($":truck: **{player.displayName}** was teleported for loitering near a vending area.");
         }
 
         private void KickPlayer(BasePlayer player)
         {
-            player.Kick("You were kicked for staying near a shopkeeper too long.");
-            PrintWarning($"[INFO] Player {player.displayName} was kicked for staying near a shopkeeper too long.");
-            LogToDiscord($":boot: **{player.displayName}** was kicked for loitering at the shopkeeper.");
+            player.Kick("You were kicked for staying near a vending area too long.");
+            PrintWarning($"[INFO] Player {player.displayName} was kicked for staying near a vending area too long.");
+            LogToDiscord($":boot: **{player.displayName}** was kicked for loitering near a vending area.");
         }
 
         private void LogToDiscord(string message)
