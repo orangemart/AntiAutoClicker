@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Oxide.Plugins
 {
-    [Info("AntiAutoClicker", "Orangemart", "1.6.0")]
+    [Info("AntiAutoClicker", "Orangemart", "1.6.1")]
     [Description("Teleports or kicks players who AFK near select NPC vendors or vending machines with a nearby marker prefab.")]
     public class AntiAutoClicker : RustPlugin
     {
