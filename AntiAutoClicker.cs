@@ -37,7 +37,7 @@ namespace Oxide.Plugins
             Config["KickInsteadOfTeleport"] = false;
             Config["DiscordWebhookURL"] = "";
             Config["TargetItemPrefab"] = "assets/prefabs/deployable/hazmatplushy/hazmatplushy_deployed.prefab";
-            Config["UseTargetItemFilter"] = true;
+            Config["UseTargetItemFilter"] = false;
             Config["MonitorNPCVendingMachines"] = true;
             Config["MonitorNPCTraders"] = true;
             SaveConfig();

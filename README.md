@@ -39,7 +39,7 @@ Created at `oxide/config/AntiAutoClicker.json`:
   "KickInsteadOfTeleport": false,
   "DiscordWebhookURL": "",
   "TargetItemPrefab": "assets/prefabs/deployable/hazmatplushy/hazmatplushy_deployed.prefab",
-  "UseTargetItemFilter": true,
+  "UseTargetItemFilter": false,
   "MonitorNPCVendingMachines": true,
   "MonitorNPCTraders": true
 }
@@ -86,7 +86,7 @@ oxide.grant user <name|steamid> antiautoclicker.kickable
 To make use of prefab filtering, you’ll need to place the target prefab (e.g. Hazmat Plushy) near the NPC vendor locations you wish to monitor. The easiest way to do this automatically on every wipe is with the **Monument Addons plugin**.
 
 🔧 Check out our **Monument Addons profile** on [GitHub: `antiautoclicker`](https://github.com/orangemart/MonumentAddons/blob/main/antiautoclicker.json)
-- It auto-places the marker prefab at known autoclicker/scripter hotspots
+- It auto-places the marker prefab at known abuse hotspots
 
 
 ## 🔄 Commands
