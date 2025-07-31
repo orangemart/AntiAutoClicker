@@ -74,9 +74,9 @@ oxide.grant user <name|steamid> antiautoclicker.kickable
 
 ## 🧠 How It Works
 1. On load, scans the map for NPC vending machines and traders
-2. If a target prefab is found within 5 meters of them, that position is monitored
-3. Every 5 minutes (or as configured), players are checked
-4. If a player stays within range for 30 minutes (or as configured):
+2. If a target prefab is found within 4 meters of them (or as configured), that position is monitored
+3. Every 1 minute (or as configured), players are checked
+4. If a player stays within range for 10 minutes (or as configured):
    - If `KickInsteadOfTeleport` = true **and** player has permission → they are kicked
    - Otherwise, they are teleported backward
 5. Discord logging is triggered if configured
