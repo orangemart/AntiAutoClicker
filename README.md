@@ -104,6 +104,6 @@ No chat or console commands are required. Everything is automated.
 If you found this plugin useful and want to support development:
 
 💸 Zap sats to [orangemart@geyser.fund](https://geyser.fund/project/orange?hero=orangemart)  
-📡 Follow [Orangemart on Nostr](https://primal.net/ORANGEMART)
+📡 Follow [Orangemart on Nostr](https://njump.me/nprofile1qy2hwumn8ghj7un9d3shjtnyv9kh2uewd9hj7qgwwaehxw309ahx7uewd3hkctcqyqdd3awntmh0ynwkarvn7f97mvnv7jc89fkpx67dmy5nandmvfzgv2vhzt7)
 
 Thanks for using AntiAutoClicker! 🧡
