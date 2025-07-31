@@ -51,10 +51,10 @@ namespace Oxide.Plugins
 
         private void LoadConfigValues()
         {
-            afkThreshold = GetConfig("AFKThresholdSeconds", 180f);
-            proximityRange = GetConfig("ProximityRangeMeters", 3f);
-            teleportDistance = GetConfig("TeleportDistanceMeters", 3f);
-            checkInterval = GetConfig("CheckIntervalSeconds", 15f);
+            afkThreshold = GetConfig("AFKThresholdSeconds", 600f);
+            proximityRange = GetConfig("ProximityRangeMeters", 4f);
+            teleportDistance = GetConfig("TeleportDistanceMeters", 4f);
+            checkInterval = GetConfig("CheckIntervalSeconds", 60f);
             kickInsteadOfTeleport = GetConfig("KickInsteadOfTeleport", false);
             discordWebhookUrl = GetConfig("DiscordWebhookURL", "");
             targetItemPrefab = GetConfig("TargetItemPrefab", "assets/prefabs/misc/xmas/sleigh/sleigh.prefab");
@@ -136,41 +136,49 @@ namespace Oxide.Plugins
             PrintWarning($"[AntiAutoClicker] Found {matched} monitored NPC positions.");
         }
 
-        private void CheckAfkPlayers()
+      private void CheckAfkPlayers()
+{
+    int detectedCount = 0;
+
+    foreach (var player in BasePlayer.activePlayerList)
+    {
+        if (player == null || !player.IsConnected || player.IsSleeping()) continue;
+
+        bool isNear = IsNearMonitoredItem(player);
+        if (isNear)
         {
-            foreach (var player in BasePlayer.activePlayerList)
+            detectedCount++;
+            PrintWarning($"[DEBUG] {player.displayName} is within range of a monitored area.");
+
+            if (!playerAfkTimers.ContainsKey(player.userID))
             {
-                if (player == null || !player.IsConnected || player.IsSleeping()) continue;
-
-                bool isNear = IsNearMonitoredItem(player);
-                if (!isNear)
+                playerAfkTimers[player.userID] = UnityEngine.Time.realtimeSinceStartup;
+            }
+            else
+            {
+                float afkTime = UnityEngine.Time.realtimeSinceStartup - playerAfkTimers[player.userID];
+                if (afkTime >= afkThreshold)
                 {
-                    playerAfkTimers.Remove(player.userID);
-                    continue;
-                }
-
-                if (!playerAfkTimers.ContainsKey(player.userID))
-                {
-                    playerAfkTimers[player.userID] = UnityEngine.Time.realtimeSinceStartup;
-                }
-                else
-                {
-                    float afkTime = UnityEngine.Time.realtimeSinceStartup - playerAfkTimers[player.userID];
-                    if (afkTime >= afkThreshold)
+                    if (kickInsteadOfTeleport && permission.UserHasPermission(player.UserIDString, KickPermission))
                     {
-                        if (kickInsteadOfTeleport && permission.UserHasPermission(player.UserIDString, KickPermission))
-                        {
-                            KickPlayer(player);
-                        }
-                        else
-                        {
-                            TeleportPlayerBack(player);
-                        }
-                        playerAfkTimers[player.userID] = UnityEngine.Time.realtimeSinceStartup;
+                        KickPlayer(player);
                     }
+                    else
+                    {
+                        TeleportPlayerBack(player);
+                    }
+                    playerAfkTimers[player.userID] = UnityEngine.Time.realtimeSinceStartup;
                 }
             }
         }
+        else
+        {
+            playerAfkTimers.Remove(player.userID);
+        }
+    }
+
+    PrintWarning($"[DEBUG] AntiAutoClicker scan complete. Players near monitored areas: {detectedCount}");
+}
 
         private bool IsNearMonitoredItem(BasePlayer player)
         {

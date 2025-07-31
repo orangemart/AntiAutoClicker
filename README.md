@@ -32,10 +32,10 @@
 Created at `oxide/config/AntiAutoClicker.json`:
 ```json
 {
-  "AFKThresholdSeconds": 1800.0,
+  "AFKThresholdSeconds": 600.0,
   "ProximityRangeMeters": 4.0,
   "TeleportDistanceMeters": 4.0,
-  "CheckIntervalSeconds": 300.0,
+  "CheckIntervalSeconds": 60.0,
   "KickInsteadOfTeleport": false,
   "DiscordWebhookURL": "",
   "TargetItemPrefab": "assets/prefabs/deployable/hazmatplushy/hazmatplushy_deployed.prefab",
